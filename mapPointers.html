@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Realtime Location Tracker</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <!-- jsFiddle will insert css and js -->
+  </head>
+  <body>
+    <style>
+      #map {
+        height: 80%;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <div style="padding: 10px;">
+      <h3>Realtime Location Tracker</h3>
+      <h4>IPC Course Work 02</h4>
+      
+    </div>
+    <div id="map"></div>
+
+    <input type="button" value="Chnage GOOGLE MAP Location" onclick="chnageGOOGLELoc()" />
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0b59KkXOk0_VzHu0P1RS-u7rTb5UNN9A&v=weekly" defer ></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+        let lat = "7.235259506302133";
+        let log = "79.84514888452317";
+
+        $(document).ready(function(){
+            initMaps(lat, log);
+        });
+
+        function chnageGOOGLELoc(log){
+            marker.setMap(null);
+
+            if(lat == "7.235259506302133" && log == "79.84514888452317"){
+                lat = "7.235292";
+                log = "79.845708";
+
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(lat,log),
+                    //icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png",
+                    icon: "p1.png",
+                    map: map,
+                });
+                map.setCenter(marker.getPosition());
+
+            }else{
+                lat = "7.235259506302133";
+                log = "79.84514888452317";
+
+
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(lat,log),
+                    icon: "pointer.png",
+                    map: map,
+                });
+
+                map.setCenter(marker.getPosition());
+          }
+        }
+
+        function setMarker(lat,log){
+          marker.setMap(null);
+          marker = new google.maps.Marker({
+              position: new google.maps.LatLng(lat,log),
+              //icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/parking_lot_maps.png",
+              icon: "p1.png",
+              map: map,
+          });
+          map.setCenter(marker.getPosition());
+        }
+
+      let map;
+      let marker;
+
+      
+
+      function initMaps(lat,log) {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: new google.maps.LatLng(lat,log),
+          zoom: 19,
+        });
+        // // Create markers.
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat,log),
+            icon: "p1.png",
+            map: map,
+        });
+      }
+    </script>
+
+<script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.3/firebase-firestore.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyDdHAHNDGjhn1uM_9ZPXlzuMfItzEIlbEQ",
+    authDomain: "ipccwtwogroup.firebaseapp.com",
+    databaseURL: "https://ipccwtwogroup-default-rtdb.firebaseio.com",
+    projectId: "ipccwtwogroup",
+    storageBucket: "ipccwtwogroup.appspot.com",
+    messagingSenderId: "1032273871913",
+    appId: "1:1032273871913:web:439a13b2b4eacaf6684838"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  var db = firebase.firestore();
+var myCollection = db.collection("GPSDetails");
+
+// myCollection.onSnapshot(function(snapshot) {
+//   snapshot.docChanges().forEach(function(change) {
+//     if (change.type === "added" || change.type === "modified") {
+//       var data = change.doc.data();
+//       // Update the div element with the value from the collection
+//       console.log(data);
+//       //document.getElementById("myDiv").innerText = data.myValue;
+//     }
+//   });
+// });
+
+myCollection
+  .orderBy("created", "desc")
+  .limit(1)
+  .onSnapshot(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      var data = doc.data();
+
+      setMarker(data.latitude,data.longitude);
+      console.log(data);
+    });
+  });
+</script>
+
+  </body>
+</html>
